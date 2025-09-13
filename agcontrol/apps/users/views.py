@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from .serializer import UserSeralizer
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .serializer import UserSeralizer, EmailLoginTokenSerializer
+
 from rest_framework import generics
 # Create your views here.
 
@@ -14,3 +18,7 @@ class RegisterView(generics.CreateAPIView):
 class ListUsersView(generics.ListAPIView):
     queryset = User.objects.all() # obtenemos todos los usuarios
     serializer_class = UserSeralizer # utilizamos el serializador definido en serializer.py
+
+
+class EmailLoginView(TokenObtainPairView):
+    serializer_class = EmailLoginTokenSerializer

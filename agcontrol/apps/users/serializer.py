@@ -1,10 +1,17 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from rest_framework import serializers
+
+from django.contrib.auth import authenticate
+
+
 
 User = get_user_model() # obtenemos el modelo de usuario personalizado
 
 class UserSeralizer(serializers.ModelSerializer):
-
+    
     # validacion estra para confirmar la contraseña
     password2 = serializers.CharField(write_only=True) # solo se utiliz para confirmar la contraseña
 
@@ -33,3 +40,36 @@ class UserSeralizer(serializers.ModelSerializer):
                 password=validated_data['password']
             )
             return user
+        
+
+
+class EmailLoginTokenSerializer(TokenObtainPairSerializer):
+    username_field = User.EMAIL_FIELD   
+    #funcion para valida el correo y contraña existentes del usuaurio
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+        
+        user = authenticate(
+            request=self.context.get('request'),
+            email=email,
+            password=password
+
+        )
+        user = authenticate(request=self.context.get('request'), email=email, password=password)
+
+        #validacion
+        if not user:
+            raise serializers.ValidationError("Credenciales invalidas, verifica tu correo contraseña. ")
+        
+        # Continuamos con al generacion del token
+
+        data = super().validate(attrs)
+        data['user'] = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+        }
+
+        return data 

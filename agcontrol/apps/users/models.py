@@ -16,6 +16,9 @@ class User(AbstractUser):
     # el rol es obligatorio y por defecto es user para los demas usuarios
     role = models.CharField(max_length=5, choices=ROLE_CHOICES, default='user')
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
     #sirve para dar una representación legible del objeto User utili para ver en el admin
     def __str__(self):
         return f"{self.username} - {self.email}"
