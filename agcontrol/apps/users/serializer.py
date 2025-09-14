@@ -22,13 +22,13 @@ class UserSeralizer(serializers.ModelSerializer):
             'password': {'write_only': True} # la contraseña solo se puede escribir, no leer
         }
         #funcion que valida que las contraseñas coincidan y crea el usuario
-        def validate(self, data):
+    def validate(self, data):
             if data ['password'] != data['password2']: # validamos si las contraseñas coinciden
                 raise serializers.ValidationError("Las contraseñas no coinciden") # si no coinciden, lanzamos un error
             return data # si coinciden, retornamos los datos
         
         #funcion que crea el usuario con los datos validados  
-        def create(self, validated_data):
+    def create(self, validated_data):
             validated_data.pop('password2') # eliminamos password2 ya que no es necesario para crear el usuario
             
             # creamos el usuario utilizando el metodo create_user del modelo User
