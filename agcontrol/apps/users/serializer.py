@@ -17,7 +17,7 @@ class UserSeralizer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name','last_name', 'email', 'phone_number', 'role', 'password', 'password2']
+        fields = ['id', 'username', 'first_name','last_name', 'email', 'phone_number', 'password', 'password2']
         extra_kwargs = { # evita que el password se muestre en las respuestas
             'password': {'write_only': True} # la contraseña solo se puede escribir, no leer
         }
@@ -42,7 +42,6 @@ class UserSeralizer(serializers.ModelSerializer):
             return user
         
 
-
 class EmailLoginTokenSerializer(TokenObtainPairSerializer):
     username_field = User.EMAIL_FIELD   
     #funcion para valida el correo y contraña existentes del usuaurio
@@ -58,7 +57,7 @@ class EmailLoginTokenSerializer(TokenObtainPairSerializer):
         )
         user = authenticate(request=self.context.get('request'), email=email, password=password)
 
-        #validacion
+        #validacion en caso de que los datos esten mal 
         if not user:
             raise serializers.ValidationError("Credenciales invalidas, verifica tu correo contraseña. ")
         
