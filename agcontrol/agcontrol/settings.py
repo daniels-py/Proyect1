@@ -53,12 +53,22 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Token de acceso válido 1 hora
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Token de refresh válido 1 día
+    # Tokens de acceso: cortos (evita que alguien use uno robado mucho tiempo)
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  
+
+    # Tokens de refresh: largos (para que el usuario no tenga que loguearse cada rato)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     
+
+    # Cada vez que uses refresh, el anterior se invalida → más seguro
     'ROTATE_REFRESH_TOKENS': True,
+
+    # Si rotas, manda a la blacklist el anterior → evita reutilización
     'BLACKLIST_AFTER_ROTATION': True,
+
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+
 
 AUTH_USER_MODEL = 'users.User'  # 'users' es el nombre de tu app, 'User' tu modelo
 

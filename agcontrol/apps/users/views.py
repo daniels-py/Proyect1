@@ -5,6 +5,11 @@ from rest_framework import permissions
 
 from rest_framework.response import Response
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import permissions, status
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from rest_framework.views import APIView
 
@@ -52,3 +57,28 @@ class ProfileView(APIView):
             'phone_number': user.phone_number,
             'role': user.role
         })
+    
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        refresh_token = request.data.get("refresh")  # OBLIGATORIO body JSON
+
+        if not refresh_token:
+            return Response(
+                {"error": "No se proporcionó el token de actualización."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(
+                {"detail": "Sesión cerrada correctamente."},
+                status=status.HTTP_200_OK
+            )
+        except Exception:
+            return Response(
+                {"error": "Token inválido o ya fue invalidado."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
